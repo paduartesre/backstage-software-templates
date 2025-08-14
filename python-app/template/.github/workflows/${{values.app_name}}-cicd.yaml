@@ -66,3 +66,22 @@ jobs:
           git add charts/${{ values.app_name }}/values-${{ values.env }}.yaml
           git commit -m "ci: Update python-app image to tag ${{ '${{ env.NEW_IMAGE_TAG }}' }}"
           git push
+
+      # - name: Install ArgoCD CLI
+      #   uses: argoproj/argo-cd-action@v2
+      #   with:
+      #     install-cli: true
+
+      # - name: Login to ArgoCD
+      #   run: |
+      #     argocd login localhost:8282 --username ${{ '${{ vars.ARGOCD_USERNAME }}' }} --password ${{ '${{ secrets.ARGOCD_TOKEN }}' }} --insecure --grpc-web
+
+      # - name: ArgoCD Create App
+      #   run: |
+      #     argocd app create ${{ values.app_name }}-${{ values.env }} --repo https://github.com/duarpax18/backstage-software-templates.git --path charts/${{ values.app_name }} --dest-server https://kubernetes.default.svc --dest-namespace ${{ values.app_name }}-${{ values.env }} --sync-policy automated --self-heal --revision master --prune --allow-empty --values-file charts/${{ values.app_name }}/values-${{ values.env }}.yaml
+
+      # - name: ArgoCD Sync
+      #   run: |
+      #     argocd app sync ${{ values.app_name }}-${{ values.env }}
+
+      # - name: ArgoCD Wait for Sync
