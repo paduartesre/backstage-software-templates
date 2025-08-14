@@ -57,13 +57,13 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           # Atualizar o arquivo values.yaml
-          sed -i "s/^\(\s*tag:\s*\).*/\\1\"${NEW_IMAGE_TAG}\"/" charts/${{ values.app_name }}/values-${{ values.env }}.yaml
+          sed -i "s/^\(\s*tag:\s*\).*/\\1\"${NEW_IMAGE_TAG}\"/" charts/${{ values.app_name }}/values-${{values.app_env}}.yaml
           
-          echo "charts/${{ values.app_name }}/values-${{ values.env }}.yaml after update:"
-          cat charts/${{ values.app_name }}/values-${{ values.env }}.yaml
+          echo "charts/${{ values.app_name }}/values-${{ values.app_env }}.yaml after update:"
+          cat charts/${{ values.app_name }}/values-${{ values.app_env }}.yaml
 
           # Fazer commit e push
-          git add charts/${{ values.app_name }}/values-${{ values.env }}.yaml
+          git add charts/${{ values.app_name }}/values-${{ values.app_env }}.yaml
           git commit -m "ci: Update python-app image to tag ${{ '${{ env.NEW_IMAGE_TAG }}' }}"
           git push
 
@@ -78,10 +78,10 @@ jobs:
 
       # - name: ArgoCD Create App
       #   run: |
-      #     argocd app create ${{ values.app_name }}-${{ values.env }} --repo https://github.com/duarpax18/backstage-software-templates.git --path charts/${{ values.app_name }} --dest-server https://kubernetes.default.svc --dest-namespace ${{ values.app_name }}-${{ values.env }} --sync-policy automated --self-heal --revision master --prune --allow-empty --values-file charts/${{ values.app_name }}/values-${{ values.env }}.yaml
+      #     argocd app create ${{ values.app_name }}-${{ values.app_env }} --repo https://github.com/duarpax18/backstage-software-templates.git --path charts/${{ values.app_name }} --dest-server https://kubernetes.default.svc --dest-namespace ${{ values.app_name }}-${{ values.app_env }} --sync-policy automated --self-heal --revision master --prune --allow-empty --values-file charts/${{ values.app_name }}/values-${{ values.app_env }}.yaml
 
       # - name: ArgoCD Sync
       #   run: |
-      #     argocd app sync ${{ values.app_name }}-${{ values.env }}
+      #     argocd app sync ${{ values.app_name }}-${{ values.app_env }}
 
       # - name: ArgoCD Wait for Sync
