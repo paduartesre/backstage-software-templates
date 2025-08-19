@@ -46,9 +46,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Get short SHA (deploy)
+        id: deploy_vars
+        run: |
+          SHA=$(git rev-parse --short=7 HEAD)
+          echo "SHORT_SHA=$SHA" >> "$GITHUB_OUTPUT"
+
       - name: Update Helm chart and push to Git
         env:
-          NEW_IMAGE_TAG: ${{ '${{ needs.build-and-push.outputs.tag }}' }}
+          NEW_IMAGE_TAG: ${{ '${{ steps.deploy_vars.outputs.SHORT_SHA }}' }}
         run: |
           echo "Updating image tag to ${{ '${{ env.NEW_IMAGE_TAG }}' }}"
 
@@ -64,8 +70,8 @@ jobs:
 
           # Fazer commit e push
           git add charts/${{ values.app_name }}/values-${{ values.app_env }}.yaml
-          git commit -m "ci: Update python-app image to tag ${{ '${{ env.NEW_IMAGE_TAG }}' }}"
-          git push
+          git commit -m "ci: Update python-app image to tag ${{ '${{ env.NEW_IMAGE_TAG }}' }}" || echo "No changes to commit"
+          git push || echo "Nothing to push"
 
       # - name: Install ArgoCD CLI
       #   uses: argoproj/argo-cd-action@v2
