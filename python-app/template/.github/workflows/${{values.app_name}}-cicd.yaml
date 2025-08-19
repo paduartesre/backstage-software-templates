@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: [self-hosted, linux]
+    runs-on: self-hosted
     permissions:
       contents: write
     outputs:
@@ -37,7 +37,7 @@ jobs:
           docker push duarpax18/python-app:${{ '${{ steps.vars.outputs.SHORT_SHA }}' }}
       
   deploy-dev:
-    runs-on: [self-hosted, linux]
+    runs-on: self-hosted
     permissions:
       contents: write
     needs: build-and-push
@@ -48,7 +48,7 @@ jobs:
 
       - name: Update Helm chart and push to Git
         env:
-          NEW_IMAGE_TAG:${{ '${{ needs.build-and-push.outputs.tag }}' }}
+          NEW_IMAGE_TAG: ${{ '${{ needs.build-and-push.outputs.tag }}' }}
         run: |
           echo "Updating image tag to ${{ '${{ env.NEW_IMAGE_TAG }}' }}"
 
@@ -57,7 +57,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           # Atualizar o arquivo values.yaml
-          sed -i "s/^\(\s*tag:\s*\).*/\\1\"${NEW_IMAGE_TAG}\"/" charts/${{ values.app_name }}/values-${{values.app_env}}.yaml
+          sed -i "s/^\(\s*tag:\s*\).*/\1\"${NEW_IMAGE_TAG}\"/" charts/${{ values.app_name }}/values-${{values.app_env}}.yaml
           
           echo "charts/${{ values.app_name }}/values-${{ values.app_env }}.yaml after update:"
           cat charts/${{ values.app_name }}/values-${{ values.app_env }}.yaml
