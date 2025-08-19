@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     permissions:
       contents: write
     outputs:
@@ -37,7 +37,7 @@ jobs:
           docker push duarpax18/python-app:${{ '${{ steps.vars.outputs.SHORT_SHA }}' }}
       
   deploy-dev:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     permissions:
       contents: write
     needs: build-and-push
@@ -74,7 +74,7 @@ jobs:
 
       # - name: Login to ArgoCD
       #   run: |
-      #     argocd login localhost:8282 --username ${{ '${{ vars.ARGOCD_USERNAME }}' }} --password ${{ '${{ secrets.ARGOCD_TOKEN }}' }} --insecure --grpc-web
+      #     argocd login localhost:8282 --username ${{ '${{ vars.ARGOCD_USERNAME }}' }} --password ${{ '${{ secrets.ARGOCD_PASSWORD }}' }} --insecure --grpc-web
 
       # - name: ArgoCD Create App
       #   run: |
