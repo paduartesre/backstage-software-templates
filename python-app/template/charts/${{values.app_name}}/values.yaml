@@ -35,11 +35,19 @@ resources:
 livenessProbe:
   httpGet:
     path: /api/v1/healthz
-    port: http
+    port: 5000
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
 readinessProbe:
   httpGet:
     path: /api/v1/healthz
-    port: http
+    port: 5000
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
 autoscaling:
   enabled: false
   minReplicas: 1

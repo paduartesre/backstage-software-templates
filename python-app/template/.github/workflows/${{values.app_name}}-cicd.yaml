@@ -117,16 +117,8 @@ jobs:
               --sync-option CreateNamespace=true
           fi
 
-      - name: ArgoCD Sync
+      - name: ArgoCD Wait for Sync and Health
         run: |
-          if argocd app get ${{ values.app_name }}-${{ values.app_env }} --output json | jq -e '.status.operationState' > /dev/null 2>&1; then
-            echo "Application is already syncing, waiting for completion..."
-            argocd app wait ${{ values.app_name }}-${{ values.app_env }} --operation --timeout 300
-          else
-            echo "No operation in progress, triggering sync..."
-            argocd app sync ${{ values.app_name }}-${{ values.app_env }}
-          fi
-
-      - name: ArgoCD Wait for Sync
-        run: |
-          argocd app wait ${{ values.app_name }}-${{ values.app_env }} --health --timeout 300
+          echo "Waiting for application to complete sync and become healthy..."
+          argocd app wait ${{ values.app_name }}-${{ values.app_env }} --operation --health --timeout 300
+          
