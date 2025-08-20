@@ -97,7 +97,25 @@ jobs:
         run: |
           set -euo pipefail
           REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
-          argocd app get ${{ values.app_name }}-${{ values.app_env }} || argocd app create ${{ values.app_name }}-${{ values.app_env }} --repo "$REPO_URL" --path charts/${{ values.app_name }} --dest-server https://kubernetes.default.svc --dest-namespace ${{ values.app_name }}-${{ values.app_env }} --sync-policy automated --self-heal --revision main --auto-prune --allow-empty --values values-${{ values.app_env }}.yaml --project default --upsert CreateNamespace=true
+          
+          if argocd app list --output name | grep -q "^${{ values.app_name }}-${{ values.app_env }}$"; then
+            echo "Application ${{ values.app_name }}-${{ values.app_env }} already exists, skipping creation"
+          else
+            echo "Creating new application ${{ values.app_name }}-${{ values.app_env }}"
+            argocd app create ${{ values.app_name }}-${{ values.app_env }} \
+              --repo "$REPO_URL" \
+              --path charts/${{ values.app_name }} \
+              --dest-server https://kubernetes.default.svc \
+              --dest-namespace ${{ values.app_name }}-${{ values.app_env }} \
+              --sync-policy automated \
+              --self-heal \
+              --revision main \
+              --auto-prune \
+              --allow-empty \
+              --values values-${{ values.app_env }}.yaml \
+              --project default
+              --sync-option CreateNamespace=true
+          fi
 
       - name: ArgoCD Sync
         run: |
