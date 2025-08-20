@@ -86,8 +86,8 @@ jobs:
 
       - name: Login to ArgoCD
         env:
-          ARGOCD_USERNAME: ${{ secrets.ARGOCD_USERNAME }}
-          ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
+          ARGOCD_USERNAME: ${{ '${{ secrets.ARGOCD_USERNAME }}' }}
+          ARGOCD_PASSWORD: ${{ '${{ secrets.ARGOCD_PASSWORD }}' }}
         run: |
           set -euo pipefail
           USERNAME="${ARGOCD_USERNAME:-admin}"
@@ -97,7 +97,7 @@ jobs:
         run: |
           set -euo pipefail
           REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
-          argocd app get ${{ values.app_name }}-${{ values.app_env }} || argocd app create ${{ values.app_name }}-${{ values.app_env }} --repo "$REPO_URL" --path charts/${{ values.app_name }} --dest-server https://kubernetes.default.svc --dest-namespace ${{ values.app_name }}-${{ values.app_env }} --sync-policy automated --self-heal --revision master --auto-prune --allow-empty --values values-${{ values.app_env }}.yaml --create-namespace
+          argocd app get ${{ values.app_name }}-${{ values.app_env }} || argocd app create ${{ values.app_name }}-${{ values.app_env }} --repo "$REPO_URL" --path charts/${{ values.app_name }} --dest-server https://kubernetes.default.svc --dest-namespace ${{ values.app_name }}-${{ values.app_env }} --sync-policy automated --self-heal --revision master --auto-prune --allow-empty --values values-${{ values.app_env }}.yaml CreateNamespace=true
 
       - name: ArgoCD Sync
         run: |
