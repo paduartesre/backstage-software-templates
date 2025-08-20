@@ -85,12 +85,19 @@ jobs:
           argocd version --client
 
       - name: Login to ArgoCD
+        env:
+          ARGOCD_USERNAME: ${{ secrets.ARGOCD_USERNAME }}
+          ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
         run: |
-          argocd login localhost:8282 --username ${{ '${{ vars.ARGOCD_USERNAME }}' }} --password ${{ '${{ secrets.ARGOCD_PASSWORD }}' }} --insecure --grpc-web
+          set -euo pipefail
+          USERNAME="${ARGOCD_USERNAME:-admin}"
+          argocd login argocd-server.argocd.svc:443 --username "$USERNAME" --password "$ARGOCD_PASSWORD" --insecure --grpc-web
 
       - name: ArgoCD Create App
         run: |
-          argocd app create ${{ values.app_name }}-${{ values.app_env }} --repo https://github.com/duarpax18/backstage-software-templates.git --path charts/${{ values.app_name }} --dest-server https://kubernetes.default.svc --dest-namespace ${{ values.app_name }}-${{ values.app_env }} --sync-policy automated --self-heal --revision master --prune --allow-empty --values-file charts/${{ values.app_name }}/values-${{ values.app_env }}.yaml
+          set -euo pipefail
+          REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          argocd app create ${{ values.app_name }}-${{ values.app_env }} --repo "$REPO_URL" --path charts/${{ values.app_name }} --dest-server https://kubernetes.default.svc --dest-namespace ${{ values.app_name }}-${{ values.app_env }} --sync-policy automated --self-heal --revision master --auto-prune --allow-empty --values values-${{ values.app_env }}.yaml --create-namespace
 
       - name: ArgoCD Sync
         run: |

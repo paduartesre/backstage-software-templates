@@ -1,8 +1,8 @@
 replicaCount: 1
 image:
-  repository: paduartesre/${{values.app_name}}
+  repository: duarpax18/python-app
   pullPolicy: IfNotPresent
-  tag: ${{values.app_name}}-${{values.app_env}}-latest
+  tag: "latest"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
