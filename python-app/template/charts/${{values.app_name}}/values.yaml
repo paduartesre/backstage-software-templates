@@ -1,7 +1,7 @@
 replicaCount: 1
 image:
   repository: duarpax18/python-app
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: "latest"
 imagePullSecrets: []
 nameOverride: ""

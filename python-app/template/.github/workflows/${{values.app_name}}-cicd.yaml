@@ -114,7 +114,8 @@ jobs:
               --allow-empty \
               --values values-${{ values.app_env }}.yaml \
               --project default \
-              --sync-option CreateNamespace=true
+              --sync-option CreateNamespace=true \
+              --upsert
           fi
 
       - name: ArgoCD Wait for Sync and Health
